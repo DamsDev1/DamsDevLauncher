@@ -6,7 +6,7 @@ const {Client} = require('discord-rpc-patch')
 let client
 let activity
 
-exports.initRPC = function(genSettings, servSettings, initialDetails = 'En attente du Jeu..'){
+exports.initRPC = function(genSettings, servSettings, initialDetails = 'En attente du jeu..'){
     client = new Client({ transport: 'ipc' })
 
     activity = {

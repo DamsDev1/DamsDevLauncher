@@ -656,7 +656,7 @@ function dlAsync(login = true){
                 const onLoadComplete = () => {
                     toggleLaunchArea(false)
                     if(hasRPC){
-                        DiscordWrapper.updateDetails('Loading game..')
+                        DiscordWrapper.updateDetails('Chargement du jeu..')
                     }
                     proc.stdout.on('data', gameStateChange)
                     proc.stdout.removeListener('data', tempListener)
@@ -685,7 +685,7 @@ function dlAsync(login = true){
                     if(SERVER_JOINED_REGEX.test(data)){
                         DiscordWrapper.updateDetails('Exploration du royaume !')
                     } else if(GAME_JOINED_REGEX.test(data)){
-                        DiscordWrapper.updateDetails('En route pour ... !')
+                        DiscordWrapper.updateDetails("Je vais m'en sortir, enfin je crois !")
                     }
                 }
 
