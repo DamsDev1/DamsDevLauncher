@@ -464,7 +464,7 @@ function bindAuthAccountLogOut(){
                 isLastAccount = true
                 setOverlayContent(
                     'Attention<br>Ceci est votre dernier compte',
-                    'In order to use the launcher you must be logged into at least one account. Vous devrez vous reconnecter après.<br><br>Vous êtes sûr de vouloir vous déconnecter ?',
+                    'Pour pouvoir utiliser le launcher, vous devez être connecté à au moins un compte. Vous devrez vous reconnecter après.<br><br>Vous êtes sûr de vouloir vous déconnecter ?',
                     "J'en suis sûr",
                     'Annuler'
                 )
@@ -1482,7 +1482,7 @@ function populateSettingsUpdateInformation(data){
         populateVersionInformation(data.version, settingsUpdateVersionValue, settingsUpdateVersionTitle, settingsUpdateVersionCheck)
         
         if(process.platform === 'darwin'){
-            settingsUpdateButtonStatus('Télécharger depuis GitHub<span style="font-size: 10px;color: gray;text-shadow: none !important;">Fermez le lanceur et exécutez le dmg pour mettre à jour.</span>', false, () => {
+            settingsUpdateButtonStatus('Télécharger depuis GitHub<span style="font-size: 10px;color: gray;text-shadow: none !important;">Fermez le launcher et exécutez le dmg pour mettre à jour.</span>', false, () => {
                 shell.openExternal(data.darwindownload)
             })
         } else {

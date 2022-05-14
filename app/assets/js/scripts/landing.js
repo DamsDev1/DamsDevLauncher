@@ -385,9 +385,9 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                 // Oracle JRE enqueue failed. Probably due to a change in their website format.
                 // User will have to follow the guide to install Java.
                 setOverlayContent(
-                    'Unexpected Issue:<br>Java Download Failed',
-                    'Unfortunately we\'ve encountered an issue while attempting to install Java. You will need to manually install a copy. Please check out our <a href="https://github.com/dscalzi/HeliosLauncher/wiki">Troubleshooting Guide</a> for more details and instructions.',
-                    'I Understand'
+                    'Problème inattendu:<br>Échec du téléchargement de Java',
+                    "Malheureusement, nous avons rencontré un problème lors de l'installation de Java. Vous devrez installer manuellement une copie. Veuillez consulter notre <a href='https://github.com/dscalzi/HeliosLauncher/wiki'>Guide de dépannage</a> pour plus de détails et d'instructions.",
+                    "J'ai compris"
                 )
                 setOverlayHandler(() => {
                     toggleOverlay(false)
@@ -877,7 +877,7 @@ let newsLoadingListener = null
  */
 function setNewsLoading(val){
     if(val){
-        const nLStr = 'Checking for News'
+        const nLStr = "Vérification de l'actualité"
         let dotStr = '..'
         nELoadSpan.innerHTML = nLStr + dotStr
         newsLoadingListener = setInterval(() => {
