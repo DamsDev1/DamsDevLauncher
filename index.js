@@ -21,6 +21,7 @@ function initAutoUpdater(event, data) {
     } else {
         // Defaults to true if application version contains prerelease components (e.g. 0.12.1-alpha.1)
         // autoUpdater.allowPrerelease = true
+        // Push test
     }
 
     if (isDev) {
