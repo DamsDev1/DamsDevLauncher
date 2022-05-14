@@ -1493,10 +1493,9 @@ function populateSettingsUpdateInformation(data){
         settingsUpdateChangelogCont.style.display = 'none'
         populateVersionInformation(remote.app.getVersion(), settingsUpdateVersionValue, settingsUpdateVersionTitle, settingsUpdateVersionCheck)
         settingsUpdateButtonStatus('Vérifier les mises à jour', false, () => {
-            if(!isDev){
                 ipcRenderer.send('autoUpdateAction', 'checkForUpdate')
                 settingsUpdateButtonStatus('Vérification des mises à jour..', true)
-            }
+
         })
     }
 }

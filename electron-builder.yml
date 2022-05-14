@@ -1,5 +1,5 @@
 appId: 'damsdevlauncher'
-productName: 'DamsDev Launcher'
+productName: 'DamsDev-Launcher'
 artifactName: '${productName}-setup-${version}.${ext}'
 
 copyright: 'Copyright © 2018-2022 Daniel Scalzi'
