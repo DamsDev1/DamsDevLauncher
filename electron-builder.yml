@@ -1,6 +1,6 @@
 appId: 'damsdevlauncher'
-productName: 'DamsDev-Launcher'
-artifactName: '${productName}-setup-${version}.${ext}'
+productName: 'DamsDev Launcher'
+artifactName: 'DamsDev-Launcher-setup-${version}.${ext}'
 
 copyright: 'Copyright © 2022-2022 DamsDev'
 
