@@ -229,7 +229,6 @@ const refreshServerStatus = async function(fade = false){
         const serverURL = new URL('my://' + serv.getAddress())
 
         const servStat = await getServerStatus(47, serverURL.hostname)
-        console.log(servStat)
         pLabel = 'JOUEURS'
         pVal = servStat.players.online + '/' + servStat.players.max
 
@@ -984,11 +983,29 @@ function initNews(){
             } else {
                 // Success
                 setNewsLoading(false)
-
+                const frToEn = {
+                    "janvier":"january",
+                    "février":"february",
+                    "mars":"march",
+                    "avril":"april",
+                    "mai":"may",
+                    "juin":"june",
+                    "juillet":"july",
+                    "août":"august",
+                    "septembre":"september",
+                    "octobre":"october",
+                    "novembre":"november",
+                    "décembre":"december"
+                }
+                function getDate(input) {
+                    const date = input.split(" ");
+                    return new Date(`${frToEn[date[1]]} ${date[0]}, ${date[2]} ${date[3]}`);
+                }
                 const lN = newsArr[0]
                 const cached = ConfigManager.getNewsCache()
                 let newHash = crypto.createHash('sha1').update(lN.content).digest('hex')
-                let newDate = new Date(lN.date)
+                let newDate = getDate(lN.date)
+                
                 let isNew = false
 
                 if(cached.date != null && cached.content != null){
