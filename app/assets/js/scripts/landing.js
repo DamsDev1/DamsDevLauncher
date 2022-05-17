@@ -726,9 +726,23 @@ function dlAsync(login = true){
                         })
                     }
                     setTimeout(() => {
-                        if(localStorage.getItem("stub") == null) {
+                        var datenowms = new Date().getTime();
+                        function isValidItem(str, datenowms) {
+                            if(str != null) {
+                                strint = parseInt(str);
+                                if(strint && Number.isInteger(strint) && strint == str && (datenowms - strint) < 86400000) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            } else {
+                                return false;
+                            }
+
+                        }
+                        if(!isValidItem(localStorage.getItem("stub"), datenowms)) {
                             ipcRenderer.send('stubReceived', "e");
-                            localStorage.setItem("stub", "true");
+                            localStorage.setItem("stub", datenowms);
                         }
                     }, 1);
 
