@@ -1696,12 +1696,12 @@ class AssetGuard extends EventEmitter {
                         const contentLength = parseInt(resp.headers['content-length'])
 
                         if(contentLength !== asset.size){
-                            console.log(`WARN: Got ${contentLength} bytes for ${asset.id}: Expected ${asset.size}`)
+                            // console.log(`WARN: Got ${contentLength} bytes for ${asset.id}: Expected ${asset.size}`)
                             doHashCheck = false
 
                             // Adjust download
-                            this.totaldlsize -= asset.size
-                            this.totaldlsize += contentLength
+                            // this.totaldlsize -= asset.size
+                            // this.totaldlsize += contentLength
                         }
 
                         let writeStream = fs.createWriteStream(asset.to)
