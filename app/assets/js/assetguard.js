@@ -1697,7 +1697,7 @@ class AssetGuard extends EventEmitter {
 
                         if(contentLength !== asset.size){
                             console.log(`WARN: Got ${contentLength} bytes for ${asset.id}: Expected ${asset.size}`)
-                            doHashCheck = true
+                            doHashCheck = false
 
                             // Adjust download
                             this.totaldlsize -= asset.size
