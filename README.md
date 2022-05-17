@@ -7,7 +7,7 @@
 
 <p align="center">Rejoignez le serveur moddé sans vous soucier d'installer Java, Forge ou d'autres mods. Nous nous en chargeons pour vous.</p>
 
-### Besoin d'aide ? [Check the wiki.][wiki]
+### Besoin d'aide ? [Voir le Wiki][wiki]
 
 ### Vous aimez le projet ? Laissez une étoile ⭐ !
 
@@ -31,7 +31,7 @@ Si vous téléchargez à partir de l'onglet [Releases](https://github.com/DamsDe
 | Linux x64 | `DamsDev-Launcher-setup-VERSION.AppImage` |
 
 
-## Resources
+## Ressources
 
 * [Wiki][wiki]
 
@@ -46,6 +46,6 @@ Si vous téléchargez à partir de l'onglet [Releases](https://github.com/DamsDe
 [rendererprocess]: https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes 'Renderer Process'
 [chromedebugger]: https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome 'Debugger for Chrome'
 [discord]: https://discord.gg/zNWUXdt 'Discord'
-[wiki]: https://github.com/dscalzi/HeliosLauncher/wiki 'wiki'
+[wiki]: https://github.com/DamsDev1/DamsDevLauncher/wiki 'wiki'
 [nebula]: https://github.com/dscalzi/Nebula 'dscalzi/Nebula'
 [v2branch]: https://github.com/dscalzi/HeliosLauncher/tree/ts-refactor 'v2 branch'
