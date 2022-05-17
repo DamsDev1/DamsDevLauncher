@@ -3,7 +3,7 @@
 
 <em><h5 align="center">Fork of Helios Launcher</h5></em>
 
-[<p align="center"><img src="https://img.shields.io/github/workflow/status/dscalzi/HeliosLauncher/Build.svg?style=for-the-badge" alt="gh actions">](https://github.com/dscalzi/HeliosLauncher/actions) [<img src="https://img.shields.io/github/downloads/DamsDev1/DamsDevLauncher/total?style=for-the-badge" alt="downloads">](https://github.com/dscalzi/HeliosLauncher/releases) <img src="https://forthebadge.com/images/badges/built-with-love.svg"  height="28px" alt="Built with <3"></p>
+[<p align="center"><img src="https://img.shields.io/github/workflow/status/DamsDev1/DamsDevLauncher/Build?style=for-the-badge" alt="gh actions">](https://github.com/DamsDev1/DamsDevLauncher/actions) [<img src="https://img.shields.io/github/downloads/DamsDev1/DamsDevLauncher/total?style=for-the-badge" alt="downloads">](https://github.com/DamsDev1/DamsDevLauncher/releases) <img src="https://forthebadge.com/images/badges/built-with-love.svg"  height="28px" alt="Built with <3"></p>
 
 <p align="center">Rejoignez le serveur moddé sans vous soucier d'installer Java, Forge ou d'autres mods. Nous nous en chargeons pour vous.</p>
 
