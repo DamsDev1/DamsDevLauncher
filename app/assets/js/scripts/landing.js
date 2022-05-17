@@ -339,7 +339,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                         //$('#overlayDismiss').toggle(false)
                         setOverlayContent(
                             'Java est nécessaire<br>pour lancer le jeu',
-                            "Une installation x64 valide de Java 8 est requise pour le lancement.<br><br>Veuillez consulter notre <a href='https://github.com/dscalzi/HeliosLauncher/wiki/Java-Management#manually-installing-a-valid-version-of-java'>guide de gestion de Java</a> pour obtenir des instructions sur la manière d'installer manuellement Java.",
+                            "Une installation x64 valide de Java 8 est requise pour le lancement.<br><br>Veuillez consulter notre <a href='https://github.com/DamsDev1/DamsDevLauncher/wiki/Gestion-de-Java#installation-manuelle-de-java'>guide de gestion de Java</a> pour obtenir des instructions sur la manière d'installer manuellement Java.",
                             "J'ai compris",
                             'Retour'
                         )
@@ -385,7 +385,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                 // User will have to follow the guide to install Java.
                 setOverlayContent(
                     'Problème inattendu:<br>Échec du téléchargement de Java',
-                    "Malheureusement, nous avons rencontré un problème lors de l'installation de Java. Vous devrez installer manuellement une copie. Veuillez consulter notre <a href='https://github.com/dscalzi/HeliosLauncher/wiki'>Guide de dépannage</a> pour plus de détails et d'instructions.",
+                    "Malheureusement, nous avons rencontré un problème lors de l'installation de Java. Vous devrez installer manuellement une copie. Veuillez consulter notre <a href='https://github.com/DamsDev1/DamsDevLauncher/wiki'>Guide de dépannage</a> pour plus de détails et d'instructions.",
                     "J'ai compris"
                 )
                 setOverlayHandler(() => {
@@ -692,7 +692,7 @@ function dlAsync(login = true){
                     data = data.trim()
                     if(data.indexOf('Could not find or load main class net.minecraft.launchwrapper.Launch') > -1){
                         loggerLaunchSuite.error('Game launch failed, LaunchWrapper was not downloaded properly.')
-                        showLaunchFailure('Erreur pendant le lancement', "Le fichier principal, LaunchWrapper, n'a pas pu être téléchargé correctement. Par conséquent, le jeu ne peut pas être lancé.<br><br>Pour résoudre ce problème, désactivez temporairement votre logiciel antivirus et relancez le jeu.<br><br>Si vous avez le temps, veuillez <a href='https://github.com/dscalzi/HeliosLauncher/issues'>soumettre un problème</a> et nous faire savoir quel logiciel antivirus vous utilisez. Nous les contacterons et tenterons d'arranger les choses.")
+                        showLaunchFailure('Erreur pendant le lancement', "Le fichier principal, LaunchWrapper, n'a pas pu être téléchargé correctement. Par conséquent, le jeu ne peut pas être lancé.<br><br>Pour résoudre ce problème, désactivez temporairement votre logiciel antivirus et relancez le jeu.<br><br>Si vous avez le temps, veuillez <a href='https://github.com/DamsDev1/DamsDevLauncher/issues'>soumettre un problème</a> et nous faire savoir quel logiciel antivirus vous utilisez. Nous les contacterons et tenterons d'arranger les choses.")
                     }
                 }
 
