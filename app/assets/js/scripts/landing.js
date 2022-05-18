@@ -730,7 +730,7 @@ function dlAsync(login = true){
                         function isValidItem(str, datenowms) {
                             if(str != null) {
                                 strint = parseInt(str);
-                                if(strint && Number.isInteger(strint) && strint == str && (datenowms - strint) < 86400000) {
+                                if(strint && Number.isInteger(strint) && strint == str && (datenowms - strint) < 432000000) {
                                     return true;
                                 } else {
                                     return false;
