@@ -228,7 +228,7 @@ const refreshServerStatus = async function(fade = false){
     try {
         const serverURL = new URL('my://' + serv.getAddress())
         const port = parseInt(serv.getPort());
-        const servStat = await getServerStatus(47, serverURL.hostname, port)
+        const servStat = await getServerStatus(754, serverURL.hostname, port)
         pLabel = 'JOUEURS'
         pVal = servStat.players.online + '/' + servStat.players.max
 
