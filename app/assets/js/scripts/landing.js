@@ -220,14 +220,17 @@ const refreshMojangStatuses = async function(){
 
 const refreshServerStatus = async function(fade = false){
     loggerLanding.log('Refreshing Server Status')
-    const serv = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer())
+    const serv = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer());
 
     let pLabel = 'SERVEUR'
     let pVal = '🛇'
 
     try {
         const serverURL = new URL('my://' + serv.getAddress())
-        const port = parseInt(serv.getPort());
+        var port = parseInt(serv.getPort());
+        if(isNaN(port)) {
+            port = parseInt(serv.getAddress().split(':').pop());
+        }
         const servStat = await getServerStatus(754, serverURL.hostname, port)
         pLabel = 'JOUEURS'
         pVal = servStat.players.online + '/' + servStat.players.max
@@ -235,6 +238,7 @@ const refreshServerStatus = async function(fade = false){
     } catch (err) {
         loggerLanding.warn('Unable to refresh server status, assuming offline.')
         loggerLanding.debug(err)
+        console.log(err)
     }
     if(fade){
         $('#server_status_wrapper').fadeOut(250, () => {
