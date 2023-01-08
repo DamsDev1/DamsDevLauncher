@@ -32,6 +32,7 @@ mac:
     - target: 'dmg'
       arch:
         - 'x64'
+        - 'arm64'
   artifactName: 'DamsDev-Launcher-setup-${version}-${arch}.${ext}'
   category: 'public.app-category.games'
 

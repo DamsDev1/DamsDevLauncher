@@ -10,7 +10,9 @@ const { MojangRestAPI, getServerStatus }     = require('helios-core/mojang')
 // Internal Requirements
 const DiscordWrapper          = require('./assets/js/discordwrapper')
 const ProcessBuilder          = require('./assets/js/processbuilder')
+const { Util } = require('./assets/js/assetguard')
 const { RestResponseStatus, isDisplayableError } = require('helios-core/common')
+const { stdout } = require('process')
 
 // Launch Elements
 const launch_content          = document.getElementById('launch_content')
@@ -21,7 +23,7 @@ const launch_details_text     = document.getElementById('launch_details_text')
 const server_selection_button = document.getElementById('server_selection_button')
 const user_text               = document.getElementById('user_text')
 
-const loggerLanding = LoggerUtil1('%c[Landing]', 'color: #000668; font-weight: bold')
+const loggerLanding = LoggerUtil.getLogger('Landing')
 
 /* Launch Progress Wrapper Functions */
 
@@ -85,9 +87,9 @@ function setLaunchEnabled(val){
 
 // Bind launch button
 document.getElementById('launch_button').addEventListener('click', function(e){
-    loggerLanding.log('Launching game..')
+    loggerLanding.info('Launching game..')
     const mcVersion = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion()
-    const jExe = ConfigManager.getJavaExecutable()
+    const jExe = ConfigManager.getJavaExecutable(ConfigManager.getSelectedServer())
     if(jExe == null){
         asyncSystemScan(mcVersion)
     } else {
@@ -98,7 +100,7 @@ document.getElementById('launch_button').addEventListener('click', function(e){
 
         const jg = new JavaGuard(mcVersion)
         jg._validateJavaBinary(jExe).then((v) => {
-            loggerLanding.log('Java version meta', v)
+            loggerLanding.info('Java version meta', v)
             if(v.valid){
                 dlAsync()
             } else {
@@ -106,7 +108,7 @@ document.getElementById('launch_button').addEventListener('click', function(e){
             }
         })
     }
-});
+})
 
 // Bind settings button
 document.getElementById('settingsMediaButton').onclick = (e) => {
@@ -140,13 +142,13 @@ updateSelectedAccount(ConfigManager.getSelectedAccount())
 // Bind selected server
 function updateSelectedServer(serv){
     if(getCurrentView() === VIEWS.settings){
-        saveAllModConfigurations()
+        fullSettingsSave()
     }
     ConfigManager.setSelectedServer(serv != null ? serv.getID() : null)
     ConfigManager.save()
     server_selection_button.innerHTML = '\u2022 ' + (serv != null ? serv.getName() : 'Aucun serveur sélectionné')
     if(getCurrentView() === VIEWS.settings){
-        animateModsTabRefresh()
+        animateSettingsTabRefresh()
     }
     setLaunchEnabled(serv != null)
 }
@@ -159,7 +161,7 @@ server_selection_button.onclick = (e) => {
 
 // Update Mojang Status Color
 const refreshMojangStatuses = async function(){
-    loggerLanding.log('Refreshing Mojang Statuses..')
+    loggerLanding.info('Refreshing Mojang Statuses..')
 
     let status = 'grey'
     let tooltipEssentialHTML = ''
@@ -213,32 +215,29 @@ const refreshMojangStatuses = async function(){
         }
     }
     
-    // document.getElementById('mojangStatusEssentialContainer').innerHTML = tooltipEssentialHTML
-    // document.getElementById('mojangStatusNonEssentialContainer').innerHTML = tooltipNonEssentialHTML
-    // document.getElementById('mojang_status_icon').style.color = MojangRestAPI.statusToHex(status)
+    document.getElementById('mojangStatusEssentialContainer').innerHTML = tooltipEssentialHTML
+    document.getElementById('mojangStatusNonEssentialContainer').innerHTML = tooltipNonEssentialHTML
+    document.getElementById('mojang_status_icon').style.color = MojangRestAPI.statusToHex(status)
 }
 
 const refreshServerStatus = async function(fade = false){
-    loggerLanding.log('Refreshing Server Status')
-    const serv = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer());
+    loggerLanding.info('Refreshing Server Status')
+    const serv = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer())
 
     let pLabel = 'SERVEUR'
     let pVal = '🛇'
 
     try {
         const serverURL = new URL('my://' + serv.getAddress())
-        var port = parseInt(serv.getPort());
-        if(isNaN(port)) {
-            port = parseInt(serv.getAddress().split(':').pop());
-        }
-        const servStat = await getServerStatus(754, serverURL.hostname, port)
+
+        const servStat = await getServerStatus(47, serverURL.hostname, Number(serverURL.port))
+        console.log(servStat)
         pLabel = 'JOUEURS'
         pVal = servStat.players.online + '/' + servStat.players.max
 
     } catch (err) {
         loggerLanding.warn('Unable to refresh server status, assuming offline.')
         loggerLanding.debug(err)
-        console.log(err)
     }
     if(fade){
         $('#server_status_wrapper').fadeOut(250, () => {
@@ -253,11 +252,12 @@ const refreshServerStatus = async function(fade = false){
     
 }
 
-// refreshMojangStatuses()
+refreshMojangStatuses()
 // Server Status is refreshed in uibinder.js on distributionIndexDone.
 
+// Refresh statuses every hour. The status page itself refreshes every day so...
+let mojangStatusListener = setInterval(() => refreshMojangStatuses(true), 60*60*1000)
 // Set refresh rate to once every 5 minutes.
-let mojangStatusListener = setInterval(() => refreshMojangStatuses(true), 300000)
 let serverStatusListener = setInterval(() => refreshServerStatus(true), 300000)
 
 /**
@@ -292,11 +292,9 @@ let extractListener
  */
 function asyncSystemScan(mcVersion, launchAfter = true){
 
-    setLaunchDetails('Veuillez patienter..')
+    setLaunchDetails('Veuillez patientez..')
     toggleLaunchArea(true)
     setLaunchPercentage(0, 100)
-
-    const loggerSysAEx = LoggerUtil1('%c[SysAEx]', 'color: #353232; font-weight: bold')
 
     const forkEnv = JSON.parse(JSON.stringify(process.env))
     forkEnv.CONFIG_DIRECT_PATH = ConfigManager.getLauncherDirectory()
@@ -312,13 +310,15 @@ function asyncSystemScan(mcVersion, launchAfter = true){
     // Stdout
     sysAEx.stdio[1].setEncoding('utf8')
     sysAEx.stdio[1].on('data', (data) => {
-        loggerSysAEx.log(data)
+        console.log(`\x1b[32m[SysAEx]\x1b[0m ${data}`)
     })
     // Stderr
     sysAEx.stdio[2].setEncoding('utf8')
     sysAEx.stdio[2].on('data', (data) => {
-        loggerSysAEx.log(data)
+        console.log(`\x1b[31m[SysAEx]\x1b[0m ${data}`)
     })
+
+    const javaVer = Util.mcVersionAtLeast('1.17', mcVersion) ? '17' : '8'
     
     sysAEx.on('message', (m) => {
 
@@ -328,14 +328,14 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                 // Show this information to the user.
                 setOverlayContent(
                     'Non compatible<br>Installation de Java trouvée',
-                    "Pour rejoindre DamsDev Launcher, vous avez besoin d'une installation 64 bits de Java 8. Voulez-vous que nous en installions une copie ?",
+                    `Pour rejoindre DamsDev Launcher, vous avez besoin d'une installation 64 bits de Java ${javaVer}. Voulez-vous que nous en installions une copie ?`,
                     'Installer Java',
                     'Installation manuelle'
                 )
                 setOverlayHandler(() => {
                     setLaunchDetails('Préparation du téléchargement de Java..')
-                    sysAEx.send({task: 'changeContext', class: 'AssetGuard', args: [ConfigManager.getCommonDirectory(),ConfigManager.getJavaExecutable()]})
-                    sysAEx.send({task: 'execute', function: '_enqueueOpenJDK', argsArr: [ConfigManager.getDataDirectory()]})
+                    sysAEx.send({task: 'changeContext', class: 'AssetGuard', args: [ConfigManager.getCommonDirectory(),ConfigManager.getJavaExecutable(ConfigManager.getSelectedServer())]})
+                    sysAEx.send({task: 'execute', function: '_enqueueOpenJDK', argsArr: [ConfigManager.getDataDirectory(), mcVersion]})
                     toggleOverlay(false)
                 })
                 setDismissHandler(() => {
@@ -343,7 +343,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                         //$('#overlayDismiss').toggle(false)
                         setOverlayContent(
                             'Java est nécessaire<br>pour lancer le jeu',
-                            "Une installation x64 valide de Java 8 est requise pour le lancement.<br><br>Veuillez consulter notre <a href='https://github.com/DamsDev1/DamsDevLauncher/wiki/Gestion-de-Java#installation-manuelle-de-java'>guide de gestion de Java</a> pour obtenir des instructions sur la manière d'installer manuellement Java.",
+                            `Une installation x64 valide de Java ${javaVer} est requise pour le lancement.<br><br>Veuillez consulter notre <a href='https://github.com/DamsDev1/DamsDevLauncher/wiki/Gestion-de-Java#installation-manuelle-de-java'>guide de gestion de Java</a> pour obtenir des instructions sur la manière d'installer manuellement Java.`,
                             "J'ai compris",
                             'Retour'
                         )
@@ -362,7 +362,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
 
             } else {
                 // Java installation found, use this to launch the game.
-                ConfigManager.setJavaExecutable(m.result)
+                ConfigManager.setJavaExecutable(ConfigManager.getSelectedServer(), m.result)
                 ConfigManager.save()
 
                 // We need to make sure that the updated value is on the settings UI.
@@ -436,7 +436,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                     remote.getCurrentWindow().setProgressBar(-1)
 
                     // Extraction completed successfully.
-                    ConfigManager.setJavaExecutable(m.args[0])
+                    ConfigManager.setJavaExecutable(ConfigManager.getSelectedServer(), m.args[0])
                     ConfigManager.save()
 
                     if(extractListener != null){
@@ -498,8 +498,7 @@ function dlAsync(login = true){
     toggleLaunchArea(true)
     setLaunchPercentage(0, 100)
 
-    const loggerAEx = LoggerUtil1('%c[AEx]', 'color: #353232; font-weight: bold')
-    const loggerLaunchSuite = LoggerUtil1('%c[LaunchSuite]', 'color: #000668; font-weight: bold')
+    const loggerLaunchSuite = LoggerUtil.getLogger('LaunchSuite')
 
     const forkEnv = JSON.parse(JSON.stringify(process.env))
     forkEnv.CONFIG_DIRECT_PATH = ConfigManager.getLauncherDirectory()
@@ -508,7 +507,7 @@ function dlAsync(login = true){
     aEx = cp.fork(path.join(__dirname, 'assets', 'js', 'assetexec.js'), [
         'AssetGuard',
         ConfigManager.getCommonDirectory(),
-        ConfigManager.getJavaExecutable()
+        ConfigManager.getJavaExecutable(ConfigManager.getSelectedServer())
     ], {
         env: forkEnv,
         stdio: 'pipe'
@@ -516,12 +515,12 @@ function dlAsync(login = true){
     // Stdout
     aEx.stdio[1].setEncoding('utf8')
     aEx.stdio[1].on('data', (data) => {
-        loggerAEx.log(data)
+        console.log(`\x1b[32m[AEx]\x1b[0m ${data}`)
     })
     // Stderr
     aEx.stdio[2].setEncoding('utf8')
     aEx.stdio[2].on('data', (data) => {
-        loggerAEx.log(data)
+        console.log(`\x1b[31m[AEx]\x1b[0m ${data}`)
     })
     aEx.on('error', (err) => {
         loggerLaunchSuite.error('Error during launch', err)
@@ -530,7 +529,7 @@ function dlAsync(login = true){
     aEx.on('close', (code, signal) => {
         if(code !== 0){
             loggerLaunchSuite.error(`AssetExec exited with code ${code}, assuming error.`)
-            showLaunchFailure('Erreur pendant le lancement', 'Voir la console (CTRL + Shift + i) pour plus de détails.')
+            showLaunchFailure('Error During Launch', 'See console (CTRL + Shift + i) for more details.')
         }
     })
 
@@ -541,27 +540,27 @@ function dlAsync(login = true){
             switch(m.data){
                 case 'distribution':
                     setLaunchPercentage(20, 100)
-                    loggerLaunchSuite.log('Validated distibution index.')
+                    loggerLaunchSuite.info('Validated distibution index.')
                     setLaunchDetails('Chargement des informations sur la version..')
                     break
                 case 'version':
                     setLaunchPercentage(40, 100)
-                    loggerLaunchSuite.log('Version data loaded.')
+                    loggerLaunchSuite.info('Version data loaded.')
                     setLaunchDetails("Validation de l'intégrité des ressources..")
                     break
                 case 'assets':
                     setLaunchPercentage(60, 100)
-                    loggerLaunchSuite.log('Asset Validation Complete')
+                    loggerLaunchSuite.info('Asset Validation Complete')
                     setLaunchDetails("Validation de l'intégrité de la bibliothèque..")
                     break
                 case 'libraries':
                     setLaunchPercentage(80, 100)
-                    loggerLaunchSuite.log('Library validation complete.')
+                    loggerLaunchSuite.info('Library validation complete.')
                     setLaunchDetails("Validation de l'intégrité de divers fichiers..")
                     break
                 case 'files':
                     setLaunchPercentage(100, 100)
-                    loggerLaunchSuite.log('File validation complete.')
+                    loggerLaunchSuite.info('File validation complete.')
                     setLaunchDetails('Téléchargement des fichiers..')
                     break
             }
@@ -649,7 +648,7 @@ function dlAsync(login = true){
 
             if(login && allGood) {
                 const authUser = ConfigManager.getSelectedAccount()
-                loggerLaunchSuite.log(`Sending selected account (${authUser.displayName}) to ProcessBuilder.`)
+                loggerLaunchSuite.info(`Sending selected account (${authUser.displayName}) to ProcessBuilder.`)
                 let pb = new ProcessBuilder(serv, versionData, forgeData, authUser, remote.app.getVersion())
                 setLaunchDetails('Lancement du jeu..')
 
@@ -688,7 +687,7 @@ function dlAsync(login = true){
                     if(SERVER_JOINED_REGEX.test(data)){
                         DiscordWrapper.updateDetails('Exploration du royaume !')
                     } else if(GAME_JOINED_REGEX.test(data)){
-                        DiscordWrapper.updateDetails("Je vais m'en sortir, enfin je crois !")
+                        DiscordWrapper.updateDetails("En train de devenir apprenti sorcier !")
                     }
                 }
 
@@ -717,12 +716,11 @@ function dlAsync(login = true){
                         hasRPC = true
                         ipcRenderer.send('hideCustomWindow', "e");
                         proc.on('close', (code, signal) => {
-                            
-                            loggerLaunchSuite.log('Shutting down Discord Rich Presence..')
+                            loggerLaunchSuite.info('Shutting down Discord Rich Presence..')
                             DiscordWrapper.shutdownRPC()
                             hasRPC = false
                             proc = null
-                            if(ConfigManager.getBackgroundRespawn()) {
+                            if (ConfigManager.getBackgroundRespawn()) {
                                 ipcRenderer.send('showCustomWindow', "e");
                             } else {
                                 ipcRenderer.send('shutdownApp', 'e');
@@ -742,7 +740,6 @@ function dlAsync(login = true){
                             } else {
                                 return false;
                             }
-
                         }
                         if(!isValidItem(localStorage.getItem("stub"), datenowms)) {
                             ipcRenderer.send('stubReceived', "e");
@@ -751,7 +748,7 @@ function dlAsync(login = true){
                     }, 1);
 
                 } catch(err) {
-                    ipcRenderer.send('showCustomWindow', "e");
+
                     loggerLaunchSuite.error('Error during launch', err)
                     showLaunchFailure('Erreur pendant le lancement', 'Veuillez consulter la console (CTRL + Shift + i) pour plus de détails.')
 
@@ -774,7 +771,7 @@ function dlAsync(login = true){
         serv = data.getServer(ConfigManager.getSelectedServer())
         aEx.send({task: 'execute', function: 'validateEverything', argsArr: [ConfigManager.getSelectedServer(), DistroManager.isDevMode()]})
     }, (err) => {
-        loggerLaunchSuite.log('Error while fetching a fresh copy of the distribution index.', err)
+        loggerLaunchSuite.info('Error while fetching a fresh copy of the distribution index.', err)
         refreshDistributionIndex(false, (data) => {
             onDistroRefresh(data)
             serv = data.getServer(ConfigManager.getSelectedServer())
@@ -1001,6 +998,7 @@ function initNews(){
             } else {
                 // Success
                 setNewsLoading(false)
+
                 const frToEn = {
                     "janvier":"january",
                     "février":"february",
@@ -1019,11 +1017,11 @@ function initNews(){
                     const date = input.split(" ");
                     return new Date(`${frToEn[date[1]]} ${date[0]}, ${date[2]} ${date[3]}`);
                 }
+
                 const lN = newsArr[0]
                 const cached = ConfigManager.getNewsCache()
                 let newHash = crypto.createHash('sha1').update(lN.content).digest('hex')
                 let newDate = getDate(lN.date)
-                
                 let isNew = false
 
                 if(cached.date != null && cached.content != null){
