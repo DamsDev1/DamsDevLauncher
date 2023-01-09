@@ -231,7 +231,6 @@ const refreshServerStatus = async function(fade = false){
         const serverURL = new URL('my://' + serv.getAddress())
 
         const servStat = await getServerStatus(47, serverURL.hostname, Number(serverURL.port))
-        console.log(servStat)
         pLabel = 'JOUEURS'
         pVal = servStat.players.online + '/' + servStat.players.max
 
@@ -1000,18 +999,18 @@ function initNews(){
                 setNewsLoading(false)
 
                 const frToEn = {
-                    "janvier":"january",
-                    "février":"february",
+                    "janv.":"january",
+                    "févr.":"february",
                     "mars":"march",
-                    "avril":"april",
+                    "avr.":"april",
                     "mai":"may",
                     "juin":"june",
-                    "juillet":"july",
+                    "juil.":"july",
                     "août":"august",
-                    "septembre":"september",
-                    "octobre":"october",
-                    "novembre":"november",
-                    "décembre":"december"
+                    "sept.":"september",
+                    "oct.":"october",
+                    "nov.":"november",
+                    "déc.":"december"
                 }
                 function getDate(input) {
                     const date = input.split(" ");
