@@ -1717,7 +1717,7 @@ class AssetGuard extends EventEmitter {
                         let doHashCheck = false
                         const contentLength = parseInt(resp.headers['content-length'])
 
-                        if(contentLength !== asset.size){
+                        if(contentLength !== asset.size && !isNaN(contentLength)){
                             AssetGuard.logger.warn(`WARN: Got ${contentLength} bytes for ${asset.id}: Expected ${asset.size}`)
                             doHashCheck = true
 
