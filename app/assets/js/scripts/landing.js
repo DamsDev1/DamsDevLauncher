@@ -707,7 +707,17 @@ function dlAsync(login = true){
                     proc.stderr.on('data', gameErrorListener)
 
                     setLaunchDetails('Terminé. Profitez du serveur !')
+                    setTimeout(() => {
+                        ipcRenderer.send('hideCustomWindow', "e");
+                    }, 2000);
 
+                    proc.on('close', (code, signal) => {
+                        if (ConfigManager.getBackgroundRespawn()) {
+                            ipcRenderer.send('showCustomWindow', "e");
+                        } else {
+                            ipcRenderer.send('shutdownApp', 'e');
+                        }
+                    });
                     // Init Discord Hook
                     const distro = DistroManager.getDistribution()
                     if(distro.discord != null && serv.discord != null){
@@ -719,11 +729,6 @@ function dlAsync(login = true){
                             DiscordWrapper.shutdownRPC()
                             hasRPC = false
                             proc = null
-                            if (ConfigManager.getBackgroundRespawn()) {
-                                ipcRenderer.send('showCustomWindow', "e");
-                            } else {
-                                ipcRenderer.send('shutdownApp', 'e');
-                            }
                         })
                     }
                     setTimeout(() => {
